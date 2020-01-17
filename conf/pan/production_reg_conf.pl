@@ -48,7 +48,15 @@ Bio::EnsEMBL::Registry->load_registry_from_url("mysql://ensro\@mysql-ens-sta-3:4
 *Bio::EnsEMBL::Compara::Utils::Registry::load_previous_core_databases = sub {
     my $release_number  = shift;
     my $species_suffix  = Bio::EnsEMBL::Compara::Utils::Registry::SUFFIX_SEPARATOR.$release_number;
-
+    Bio::EnsEMBL::Registry->load_registry_from_db(
+        -host   => 'mysql-ens-mirror-1',
+        -port   => 4240,
+        -user   => 'ensro',
+        -pass   => '',
+        -db_version     => $release_number,
+        -species_suffix => $species_suffix,
+    );
+    Bio::EnsEMBL::Registry->remove_DBAdaptor('saccharomyces_cerevisiae_'.$species_suffix, 'core'); # never use Vertebrates' version of yeast
     Bio::EnsEMBL::Registry->load_registry_from_db(
         -host   => 'mysql-ens-mirror-3',
         -port   => 4275,
@@ -57,10 +65,9 @@ Bio::EnsEMBL::Registry->load_registry_from_url("mysql://ensro\@mysql-ens-sta-3:4
         -db_version     => $release_number,
         -species_suffix => $species_suffix,
     );
-    Bio::EnsEMBL::Registry->remove_DBAdaptor('saccharomyces_cerevisiae'.$species_suffix, 'core'); # never use EG's version of yeast
     Bio::EnsEMBL::Registry->load_registry_from_db(
-        -host   => 'mysql-ens-mirror-1',
-        -port   => 4240,
+        -host   => 'mysql-ens-mirror-4',
+        -port   => 4495,
         -user   => 'ensro',
         -pass   => '',
         -db_version     => $release_number,
