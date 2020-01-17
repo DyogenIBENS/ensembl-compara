@@ -52,10 +52,20 @@ sub cleanup_adaptors_from_vertebrates_server {
 
 # ---------------------- CURRENT CORE DATABASES----------------------------------
 
-# most cores are on EG servers, but some are on ensembl's vertannot-staging
-Bio::EnsEMBL::Registry->load_registry_from_url("mysql://ensro\@mysql-ens-vertannot-staging:4573/$curr_release");
+# Vertebrates server
+Bio::EnsEMBL::Registry->load_registry_from_url("mysql://ensro\@mysql-ens-sta-1:4519/$curr_release");
+# But remove the non-vertebrates species
+cleanup_adaptors_from_vertebrates_server('');
+# Non-Vertebrates server
 Bio::EnsEMBL::Registry->load_registry_from_url("mysql://ensro\@mysql-ens-sta-3:4160/$curr_release");
-#Bio::EnsEMBL::Registry->remove_DBAdaptor('saccharomyces_cerevisiae', 'core'); # never use EG's version of yeast
+# Bacteria server: all species used in Pan happen to be in this database
+Bio::EnsEMBL::Compara::Utils::Registry::load_collection_core_database(
+    -host   => 'mysql-ens-sta-4',
+    -port   => 4494,
+    -user   => 'ensro',
+    -pass   => '',
+    -dbname => "bacteria_0_collection_core_${curr_eg_release}_${curr_release}_1",
+);
 
 # ---------------------- PREVIOUS CORE DATABASES---------------------------------
 
