@@ -80,12 +80,13 @@ Bio::EnsEMBL::Registry->load_registry_from_url("mysql://ensro\@mysql-ens-sta-3:4
         -db_version     => $release_number,
         -species_suffix => $species_suffix,
     );
-    Bio::EnsEMBL::Registry->load_registry_from_db(
+    # Bacteria server: all species used in Pan happen to be in this database
+    Bio::EnsEMBL::Compara::Utils::Registry::load_collection_core_database(
         -host   => 'mysql-ens-mirror-4',
         -port   => 4495,
         -user   => 'ensro',
         -pass   => '',
-        -db_version     => $release_number,
+        -dbname => "bacteria_0_collection_core_".($release_number-53)."_${release_number}_1",
         -species_suffix => $species_suffix,
     );
 };
