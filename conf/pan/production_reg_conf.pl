@@ -35,6 +35,21 @@ my $prev_release = $curr_release - 1;
 my $curr_eg_release = $ENV{'CURR_EG_RELEASE'};
 my $prev_eg_release = $curr_eg_release - 1;
 
+
+## To avoid warnings
+sub cleanup_adaptors_from_vertebrates_server {
+    my $species_suffix = shift;
+    foreach my $s (qw(saccharomyces_cerevisiae drosophila_melanogaster caenorhabditis_elegans)) {
+        foreach my $g (qw(core otherfeatures variation funcgen)) {
+            Bio::EnsEMBL::Registry->remove_DBAdaptor("${s}${species_suffix}", $g);
+        }
+    }
+    foreach my $g (qw(ontology taxonomy)) {
+        Bio::EnsEMBL::Registry->remove_DBAdaptor('multi', $g);
+    }
+}
+
+
 # ---------------------- CURRENT CORE DATABASES----------------------------------
 
 # most cores are on EG servers, but some are on ensembl's vertannot-staging
@@ -56,7 +71,7 @@ Bio::EnsEMBL::Registry->load_registry_from_url("mysql://ensro\@mysql-ens-sta-3:4
         -db_version     => $release_number,
         -species_suffix => $species_suffix,
     );
-    Bio::EnsEMBL::Registry->remove_DBAdaptor('saccharomyces_cerevisiae_'.$species_suffix, 'core'); # never use Vertebrates' version of yeast
+    cleanup_adaptors_from_vertebrates_server("_${species_suffix}");
     Bio::EnsEMBL::Registry->load_registry_from_db(
         -host   => 'mysql-ens-mirror-3',
         -port   => 4275,
